@@ -152,8 +152,8 @@ document.documentElement.classList.add('js');
     <dl class="stats cs-stats reveal">
       <div class="stat"><dt>Surfaces</dt><dd>4<small class="sub">staff portal · website · android · api</small></dd></div>
       <div class="stat"><dt>Daily policy checks</dt><dd>18<small class="sub">live bookings · 6 channels × 3 windows</small></dd></div>
-      <div class="stat"><dt>Booking channels</dt><dd>6<small class="sub">b2b · web · api · admin · staff · new admin</small></dd></div>
-      <div class="stat"><dt>Invoice checks</dt><dd>4<small class="sub">reconciliation layers per invoice</small></dd></div>
+      <div class="stat"><dt>Test cases</dt><dd>112+<small class="sub">across 15 suites</small></dd></div>
+      <div class="stat"><dt>Invoice checks</dt><dd>8<small class="sub">verification layers per booking</small></dd></div>
     </dl>
 
     <div class="work-grid">
@@ -172,11 +172,11 @@ document.documentElement.classList.add('js');
 
       <article class="work reveal">
         <div class="work-top"><span class="work-n">B</span><span class="pill">UI automation</span></div>
-        <h3>Staff Portal booking journeys</h3>
+        <h3>Website &amp; Staff Portal booking journeys</h3>
         <ul class="cs-list">
-          <li>Full journey from lead and itinerary through cabin, guests, quotation and payment link to the payment gateway with OTP.</li>
-          <li>Full payment, advance voucher and multi-night itinerary scenarios.</li>
-          <li>Offer bookings per pricing slab (Tax-Only, Companion, Kids Sail Free), verified in the database.</li>
+          <li><b>Website:</b> a 54-case booking-flow regression covering cabin selection, removal and upgrade, PAN/GSTIN billing validation, Kids Sail Free and other offers, plus an end-to-end booking up to payment and a captcha trigger test.</li>
+          <li><b>Staff Portal:</b> the full sales journey from lead and itinerary through cabin, guests, quotation and payment link to the payment gateway with OTP.</li>
+          <li>Full payment, advance voucher and multi-night scenarios, and offer bookings per pricing slab (Tax-Only, Companion, Kids Sail Free) verified in the database.</li>
           <li>Add-guest and cabin-upgrade flows.</li>
         </ul>
         <p class="work-out"><b>Outcome</b> Revenue-critical booking paths are regression-tested from UI to database.</p>
@@ -196,15 +196,16 @@ document.documentElement.classList.add('js');
       </article>
 
       <article class="work reveal">
-        <div class="work-top"><span class="work-n">D</span><span class="pill">In progress</span></div>
-        <h3>Tax invoice verification engine</h3>
+        <div class="work-top"><span class="work-n">D</span><span class="pill">Billing</span></div>
+        <h3>Tax invoice &amp; debit note verification engine</h3>
         <ul class="cs-list">
-          <li>Parses invoice PDFs and checks every printed figure against an oracle derived from the invoicing logic: GST (CGST/SGST or IGST), TCS, discounts, rounding and grand total.</li>
-          <li>Four reconciliation layers: PDF vs database, PDF internal consistency, database vs payment snapshot, and database vs current guests.</li>
-          <li>Single-booking mode, or a bulk audit across a financial year, run in parallel weekly chunks.</li>
+          <li>Parses tax invoice and debit note PDFs (add guest, reschedule, upgrade, shore excursion, protection plan and more) and checks every printed figure against an oracle built from the database, the payment and the booking: GST (CGST/SGST vs IGST), TCS, HSN, discounts, rounding and amount in words.</li>
+          <li>Eight verification layers, including PDF vs database, internal consistency, payment reconciliation, guest price rebuild, booking total vs all documents, overpayment detection and invoice numbering (duplicates and gaps per series).</li>
+          <li>Seller and buyer GSTIN validation (format, state code, check character) and PAN checks.</li>
+          <li>Runs on UAT, or read-only on production through the Metabase API with guardrails against mixed targets; anything from one booking to a full financial year in parallel, with a CSV PASS/FAIL report by email.</li>
         </ul>
-        <p class="work-out"><b>Outcome</b> A path to auditing every tax invoice in a financial year automatically.</p>
-        <ul class="chips"><li>Node.js</li><li>pdf-parse</li><li>PostgreSQL</li></ul>
+        <p class="work-out"><b>Outcome</b> Full-year audits run 3.3× faster with parallel workers (one month: 51 → 15 min), and production audits surfaced real billing data issues.</p>
+        <ul class="chips"><li>Node.js</li><li>pdf-parse</li><li>PostgreSQL</li><li>Metabase API</li><li>AWS SES</li></ul>
       </article>
 
       <article class="work reveal">
@@ -221,14 +222,15 @@ document.documentElement.classList.add('js');
 
       <article class="work reveal">
         <div class="work-top"><span class="work-n">F</span><span class="pill">Reporting</span></div>
-        <h3>Email reporting &amp; CI readiness</h3>
+        <h3>Email reporting &amp; CI/CD</h3>
         <ul class="cs-list">
-          <li>Custom Playwright reporter that emails a pass/fail summary, HTML results and per-test booking details after every run.</li>
-          <li>Serial execution by design, so tests never race on shared OTP inboxes or live staging payments.</li>
+          <li>Custom Playwright reporters that email pass/fail summaries, HTML results, per-test booking details and CSV issue reports through AWS SES.</li>
+          <li>Suites run in a Jenkins pipeline (web and Android emulator stages) and in Bitbucket Pipelines (headless custom pipelines per suite).</li>
+          <li>Serial execution for OTP and payment flows so tests never race on shared inboxes or live payments; parallel workers for read-only audits.</li>
           <li>CI retries and screenshots on failure.</li>
         </ul>
-        <p class="work-out"><b>Outcome</b> Every run produces a readable report for the team, without opening CI.</p>
-        <ul class="chips"><li>Playwright</li><li>Nodemailer</li><li>CI</li></ul>
+        <p class="work-out"><b>Outcome</b> Invoice and cancellation checks once done by hand now run in CI, with a readable report after every run.</p>
+        <ul class="chips"><li>Playwright</li><li>AWS SES</li><li>Jenkins</li><li>Bitbucket Pipelines</li></ul>
       </article>
     </div>
   </div>
@@ -290,7 +292,7 @@ document.documentElement.classList.add('js');
     <div class="skills">
       <div class="skill reveal">
         <h3><span class="sk-ico" aria-hidden="true">◎</span>Testing</h3>
-        <ul class="chips chips-lg"><li>Manual</li><li>Functional</li><li>Regression</li><li>End-to-end</li><li>API</li><li>Mobile</li><li>UAT</li><li>Cross-browser</li></ul>
+        <ul class="chips chips-lg"><li>Manual</li><li>Functional</li><li>Regression</li><li>End-to-end</li><li>API</li><li>Mobile</li><li>UAT</li><li>Cross-browser</li><li>PDF validation</li><li>GST / TCS tax validation</li></ul>
       </div>
       <div class="skill reveal">
         <h3><span class="sk-ico" aria-hidden="true">⌘</span>Automation &amp; tools</h3>
@@ -298,11 +300,11 @@ document.documentElement.classList.add('js');
       </div>
       <div class="skill reveal">
         <h3><span class="sk-ico" aria-hidden="true">{ }</span>Backend development</h3>
-        <ul class="chips chips-lg"><li>Node.js</li><li>Express.js</li><li>REST APIs</li><li>Request validation</li><li>SQL / MySQL</li><li>PostgreSQL</li></ul>
+        <ul class="chips chips-lg"><li>Node.js</li><li>Express.js</li><li>REST APIs</li><li>Request validation</li><li>SQL / MySQL</li><li>PostgreSQL</li><li>Metabase API</li></ul>
       </div>
       <div class="skill reveal">
-        <h3><span class="sk-ico" aria-hidden="true">≋</span>Ops &amp; signals</h3>
-        <ul class="chips chips-lg"><li>AWS CloudWatch</li><li>Lighthouse</li><li>Google Tag Manager</li><li>Agile Scrum</li></ul>
+        <h3><span class="sk-ico" aria-hidden="true">≋</span>CI/CD &amp; ops</h3>
+        <ul class="chips chips-lg"><li>Jenkins</li><li>Bitbucket Pipelines</li><li>AWS SES</li><li>AWS CloudWatch</li><li>Lighthouse</li><li>Google Tag Manager</li><li>Agile Scrum</li></ul>
       </div>
     </div>
 
